@@ -1,5 +1,7 @@
 package service.impl;
 
+import javax.servlet.http.HttpServletRequest;
+
 import dao.UserDao;
 import dao.impl.UserDaoImpl;
 import entities.User;
@@ -12,15 +14,27 @@ public class UserServiceImpl implements UserService {
 	 * 注册账号
 	 */
 	@Override
-	public void register(User user) throws Exception {
+	public void register(User user,HttpServletRequest request) throws Exception {
 
 		UserDao userDao = new UserDaoImpl();
 		userDao.register(user);
 
 		// 发送邮件
 		String email = user.getEmail();
-		String msg = "这是来自刘亚明商城项目的账号激活邮件,<a href='http://localhost/store_v1/user?method=active&code=" + user.getCode()
-				+ "'>点这里激活</a>";
+		String msg = "这是来自刘亚明商城项目的账号激活邮件,<a href=\""+request.getServerName()+"/store_v1/user?method=active&code=" + user.getCode()
+				+ "\">点这里激活</a>";
+		/*String msg = "<!DOCTYPE html>"+
+		"<html>"+
+		"<head>"+
+			"<meta charset='UTF-8'>"+
+		"</head>"+
+		"<body>"+
+		"这是来自刘亚明商城项目的账号激活邮件,<a href='"+request.getServerName()+"/store_v1/user?method=active&code=" + user.getCode()
+		+ "'>点这里激活</a>"+
+		"</body>"+
+	"</html>";*/
+
+		System.out.println(msg);
 		MailUtils.sendMail(email, msg);
 	}
 

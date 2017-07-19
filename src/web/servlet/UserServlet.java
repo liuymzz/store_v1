@@ -62,7 +62,7 @@ public class UserServlet extends BaseServlet {
 			e1.printStackTrace();
 		}
 
-		String picCode = request.getParameter("picCode");
+		String picCode = (String) request.getSession().getAttribute("picCode");
 		if (picCode.equals(request.getSession().getAttribute("picCode"))) {
 			User user = new User();
 
@@ -73,6 +73,7 @@ public class UserServlet extends BaseServlet {
 			user.setCode(UUIDUtils.getCode());
 
 			try {
+				//注册一个自定义转换器
 				ConvertUtils.register(new MyDateConvertor(), Date.class);
 				BeanUtils.populate(user, request.getParameterMap());
 			} catch (IllegalAccessException e) {
@@ -85,7 +86,7 @@ public class UserServlet extends BaseServlet {
 
 			UserService userService = new UserServiceImpl();
 
-			userService.register(user);
+			userService.register(user,request);
 
 			// 注册成功跳转至msg.jsp页面并显示提示信息
 			request.setAttribute("msg", "注册成功,请登陆注册时填写的邮箱激活");
@@ -151,7 +152,7 @@ public class UserServlet extends BaseServlet {
 		String username = request.getParameter("username");
 		String password = request.getParameter("password");
 		
-		String picCode = request.getParameter("picCode");
+		String picCode = (String) request.getSession().getAttribute("picCode");
 		//先判断验证码是否输入正确
 		if (picCode.equals(request.getSession().getAttribute("picCode"))) {
 			UserService userService = new UserServiceImpl();
@@ -172,6 +173,7 @@ public class UserServlet extends BaseServlet {
 			//最终将用户数据放置域对象中并跳转至首页
 			request.getSession().setAttribute("user", user);
 			response.sendRedirect(request.getContextPath()+"/");
+			return null;
 		}else{
 			request.setAttribute("msg", "请输入正确的验证码");
 		}

@@ -1,10 +1,12 @@
 package service;
 
+import javax.servlet.http.HttpServletRequest;
+
 import entities.User;
 
 public interface UserService {
 
-	void register(User user) throws Exception;
+	void register(User user,HttpServletRequest request) throws Exception;
 
 	User active(String code) throws Exception;
 
